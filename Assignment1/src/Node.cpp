@@ -1,12 +1,12 @@
 #include "Node.h"
 #include "SearchMethod.h"
 
-Node::Node(int* state, uint width, uint height, const Node* parent)
+Node::Node(byte* state, byte width, byte height, const Node* parent)
 	: parent(parent), width(width), height(height), direction(Direction::NONE), position(0, 0),
 		fCost(0), gCost(0), hCost(0)
 {
-	this->state = new int[width * height];
-	memcpy(this->state, state, width * height * sizeof(int));
+	this->state = new byte[width * height];
+	memcpy(this->state, state, width * height * sizeof(byte));
 }
 
 Node::~Node()
@@ -14,25 +14,25 @@ Node::~Node()
 	delete[] state;
 }
 
-int Node::GetNextDirections()
+byte Node::GetNextDirections()
 {
-	int result = 0;
+	byte result = 0;
 	if (position.x > 0)
-		result |= (int)Direction::LEFT;
+		result |= (byte)Direction::LEFT;
 	if (position.x < width - 1)
-		result |= (int)Direction::RIGHT;
+		result |= (byte)Direction::RIGHT;
 	if (position.y > 0)
-		result |= (int)Direction::UP;
+		result |= (byte)Direction::UP;
 	if (position.y < height - 1)
-		result |= (int)Direction::DOWN;
+		result |= (byte)Direction::DOWN;
 	return result;
 }
 
 std::vector<Node*> Node::GetNextStates()
 {
 	std::vector<Node*> results;
-	int direction = GetNextDirections();
-	int current = (int)Direction::UP;
+	byte direction = GetNextDirections();
+	byte current = (byte)Direction::UP;
 	while (current < direction)
 	{
 		if ((direction & current) == 0)
@@ -58,7 +58,7 @@ std::vector<Node*> Node::GetNextStates()
 				break;
 		}
 		Node* candidate = new Node(state, width, height, this);
-		memcpy(candidate->state, state, width * height * sizeof(int));
+		memcpy(candidate->state, state, width * height * sizeof(byte));
 		candidate->state[position.x + position.y * width] = state[next.x + next.y * width];
 		candidate->state[next.x + next.y * width] = state[position.x + position.y * width];
 		candidate->direction = (Direction)current;
@@ -70,7 +70,7 @@ std::vector<Node*> Node::GetNextStates()
 	return results;
 }
 
-void Node::SetCost(int gCost, int hCost)
+void Node::SetCost(short gCost, short hCost)
 {
 	fCost = gCost + hCost;
 	this->gCost = gCost;

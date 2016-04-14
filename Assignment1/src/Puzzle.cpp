@@ -1,10 +1,10 @@
 #include "Puzzle.h"
 
-Puzzle::Puzzle(uint width, uint height)
+Puzzle::Puzzle(byte width, byte height)
 	: m_Width(width), m_Height(height)
 {
-	m_State = new int[width * height];
-	m_GoalState = new int[width * height];
+	m_State = new byte[width * height];
+	m_GoalState = new byte[width * height];
 }
 
 Puzzle::~Puzzle()

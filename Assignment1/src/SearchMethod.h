@@ -25,9 +25,9 @@ public:
 
 	virtual std::vector<Direction> Solve(const Puzzle& puzzle) = 0;
 
-	inline bool IsSolved(int* state, int* goal, int size)
+	inline bool IsSolved(byte* state, byte* goal, byte size)
 	{
-		return memcmp(state, goal, size * sizeof(int)) == 0;
+		return memcmp(state, goal, size * sizeof(byte)) == 0;
 	}
 
 	virtual String GetName() = 0;

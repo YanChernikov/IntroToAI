@@ -21,9 +21,9 @@ std::vector<Direction> AStarSearch::TracePath(const Node& leaf)
 std::vector<Direction> AStarSearch::Solve(const Puzzle& puzzle)
 {
 	int blankTileIndex = puzzle.FindBlankTile();
-	int* goalState = puzzle.GetGoalState();
-	uint width = puzzle.GetWidth();
-	uint height = puzzle.GetHeight();
+	byte* goalState = puzzle.GetGoalState();
+	byte width = puzzle.GetWidth();
+	byte height = puzzle.GetHeight();
 
 	Node* root = new Node(puzzle.GetState(), width, height, nullptr);
 	root->SetCost(0, CalculateHeuristic(root->state, goalState, width, height));
@@ -86,7 +86,7 @@ bool AStarSearch::SetContains(const std::vector<Node*>& set, Node* node)
 	return false;
 }
 
-int AStarSearch::CalculateHeuristic(int* state, int* goalState, int width, int height)
+short AStarSearch::CalculateHeuristic(byte* state, byte* goalState, byte width, byte height)
 {
 	int score = 0;
 	for (int y = 0; y < width * height; y++)

@@ -21,9 +21,9 @@ std::vector<Direction> GreedySearch::TracePath(const Node& leaf)
 std::vector<Direction> GreedySearch::Solve(const Puzzle& puzzle)
 {
 	int blankTileIndex = puzzle.FindBlankTile();
-	int* goalState = puzzle.GetGoalState();
-	uint width = puzzle.GetWidth();
-	uint height = puzzle.GetHeight();
+	byte* goalState = puzzle.GetGoalState();
+	byte width = puzzle.GetWidth();
+	byte height = puzzle.GetHeight();
 
 	Node* root = new Node(puzzle.GetState(), width, height, nullptr);
 	root->hCost = CalculateHeuristic(root->state, goalState, width, height);
@@ -83,9 +83,9 @@ bool GreedySearch::SetContains(const std::vector<Node*>& set, Node* node)
 	return false;
 }
 
-int GreedySearch::CalculateHeuristic(int* state, int* goalState, int width, int height)
+short GreedySearch::CalculateHeuristic(byte* state, byte* goalState, byte width, byte height)
 {
-	int score = 0;
+	short score = 0;
 	for (int y = 0; y < width * height; y++)
 	{
 		for (int x = 0; x < width * height; x++)

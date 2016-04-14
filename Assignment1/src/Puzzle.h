@@ -7,11 +7,11 @@
 class Puzzle
 {
 private:
-	int* m_State;
-	int* m_GoalState;
-	uint m_Width, m_Height;
+	byte* m_State;
+	byte* m_GoalState;
+	byte m_Width, m_Height;
 public:
-	Puzzle(uint width, uint height);
+	Puzzle(byte width, byte height);
 	~Puzzle();
 
 	void SetCurrentState(const String& state);
@@ -20,9 +20,9 @@ public:
 	int FindBlankTile() const;
 	std::vector<Direction> Solve(SearchMethod& method);
 
-	inline int* GetState() const { return m_State; }
-	inline int* GetGoalState() const { return m_GoalState; }
+	inline byte* GetState() const { return m_State; }
+	inline byte* GetGoalState() const { return m_GoalState; }
 
-	inline uint GetWidth() const { return m_Width; }
-	inline uint GetHeight() const { return m_Height; }
+	inline byte GetWidth() const { return m_Width; }
+	inline byte GetHeight() const { return m_Height; }
 };

@@ -5,24 +5,24 @@
 
 struct Node
 {
-	int* state;
-	uint width, height;
+	byte* state;
+	byte width, height;
 	const Node* parent;
 	Vector2i position;
 	Direction direction;
 
-	int fCost, gCost, hCost;
+	short fCost, gCost, hCost;
 
-	Node(int* state, uint width, uint height, const Node* parent);
+	Node(byte* state, byte width, byte height, const Node* parent);
 	~Node();
-	int GetNextDirections();
+	byte GetNextDirections();
 	std::vector<Node*> GetNextStates();
 
-	void SetCost(int gCost, int hCost);
+	void SetCost(short gCost, short hCost);
 
 	inline bool operator==(const Node& other) const
 	{
-		return memcmp(state, other.state, width * height * sizeof(int)) == 0;
+		return memcmp(state, other.state, width * height * sizeof(byte)) == 0;
 	}
 
 	inline bool operator!=(const Node& other)

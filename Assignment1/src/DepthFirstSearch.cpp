@@ -23,14 +23,14 @@ std::vector<Direction> DepthFirstSearch::Solve(const Puzzle& puzzle)
 {
 	m_Puzzle = &puzzle;
 
-	uint width = puzzle.GetWidth();
-	uint height = puzzle.GetHeight();
+	byte width = puzzle.GetWidth();
+	byte height = puzzle.GetHeight();
 	Node* root = new Node(puzzle.GetState(), width, height, nullptr);
 	int blankTileIndex = puzzle.FindBlankTile();
 	root->position = Vector2i(blankTileIndex % width, blankTileIndex / width);
 	std::stack<Node*> searchNodes;
 	searchNodes.push(root);
-	int* goalState = puzzle.GetGoalState();
+	byte* goalState = puzzle.GetGoalState();
 	while (searchNodes.size() > 0)
 	{
 		m_Iterations++;

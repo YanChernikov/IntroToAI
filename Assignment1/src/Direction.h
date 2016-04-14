@@ -2,7 +2,7 @@
 
 #include <Common/Common.h>
 
-enum class Direction
+enum class Direction : byte
 {
 	NONE = 0,
 	UP = BIT(0),

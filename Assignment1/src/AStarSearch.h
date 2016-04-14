@@ -19,5 +19,5 @@ public:
 private:
 	Node* FindBestNode(const std::vector<Node*>& set, int* index = nullptr);
 	bool SetContains(const std::vector<Node*>& set, Node* node);
-	int CalculateHeuristic(int* state, int* goalState, int width, int height);
+	short CalculateHeuristic(byte* state, byte* goalState, byte width, byte height);
 };
