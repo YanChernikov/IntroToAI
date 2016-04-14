@@ -5,8 +5,6 @@ VisualStudioVersion = 14.0.24720.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TutorialWeek2", "TutorialWeek2\TutorialWeek2.vcxproj", "{CF32544D-DEFA-4A7C-B1B9-DD1B1940829F}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "TutorialWeek3", "TutorialWeek3\TutorialWeek3.vcxproj", "{C3A56B29-0F10-4635-91A0-9C3801F3559F}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Common", "Common\Common.vcxproj", "{B182B134-C728-46C1-9D85-FF94D2C6BF35}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Assignment1", "Assignment1\Assignment1.vcxproj", "{7C1915E3-6FBD-4299-A39F-59190627FCA9}"
