@@ -9,6 +9,8 @@ typedef std::vector<String> StringList;
 String ReadStringFromFile(const String& path);
 StringList ReadLinesFromFile(const String& path);
 
+void WriteStringToFile(const String& string, const String& path);
+
 StringList SplitString(const String& string, const String& delimiters);
 StringList SplitString(const String& string, const char delimiter);
 StringList Tokenize(const String& string);

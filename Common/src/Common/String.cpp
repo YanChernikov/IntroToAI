@@ -36,6 +36,15 @@ StringList ReadLinesFromFile(const String& path)
 	return GetLines(string);
 }
 
+void WriteStringToFile(const String& string, const String& path)
+{
+	FILE* file = fopen(path.c_str(), "wt");
+	if (!file)
+		return;
+	fputs(string.c_str(), file);
+	fclose(file);
+}
+
 StringList SplitString(const String& string, const String& delimiters)
 {
 	size_t start = 0;
