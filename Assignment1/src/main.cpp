@@ -17,7 +17,7 @@ int main(int argc, char* argv[])
 		std::cout << "\tUsage: search filename method(BFS|DFS|AS) [output_filename]" << std::endl;
 		return 1;
 	}
-
+	
 	String filepath = argv[1];
 	String method = argv[2];
 	StringList lines = ReadLinesFromFile(filepath);
@@ -44,9 +44,14 @@ int main(int argc, char* argv[])
 	ASSERT(smptr);
 
 	SearchMethod& search = *smptr;
+	std::vector<Direction> result;
+	float time;
 	Timer timer;
-	auto result = puzzle.Solve(search);
-	float time = timer.ElapsedMillis();
+	for (int i = 0; i < 1; i++)
+	{
+		result = puzzle.Solve(search, i == 0);
+	}
+	time = timer.ElapsedMillis();
 
 	if (result.size() == 0)
 	{

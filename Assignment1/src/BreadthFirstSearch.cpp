@@ -21,53 +21,40 @@ std::vector<Direction> BreadthFirstSearch::TracePath(const Node& leaf)
 
 std::vector<Direction> BreadthFirstSearch::Solve(const Puzzle& puzzle)
 {
+	m_VisitedNodes.clear();
 	m_Puzzle = &puzzle;
 
 	byte width = puzzle.GetWidth();
 	byte height = puzzle.GetHeight();
-	Node* root = new Node(puzzle.GetState(), width, height, nullptr);
+	Node* root = new Node((State*)puzzle.GetState(), width, height, nullptr);
 	int blankTileIndex = puzzle.FindBlankTile();
 	root->position = Vector2i(blankTileIndex % width, blankTileIndex / width);
 	std::queue<Node*> searchNodes;
 	searchNodes.push(root);
 	byte* goalState = puzzle.GetGoalState();
+
+	std::function<bool(State&)> candidateCheck = std::bind(&SearchMethod::IsStateVisited, this, std::placeholders::_1);
+	std::function<void(Node*)> addCandidate = [&](Node* n)
+	{
+		m_VisitedNodes.insert(n->state);
+		searchNodes.push(n);
+	};
+
 	while (searchNodes.size() > 0)
 	{
 		m_Iterations++;
 		Node& node = *searchNodes.front();
 		searchNodes.pop();
 
-		if (IsSolved(node.state, goalState, width * height))
+		if (IsSolved(node.state.values, goalState, width * height))
 			return TracePath(node);
 
-		std::vector<Node*> candidates = node.GetNextStates();
-		for (Node* candidate : candidates)
-		{
-			if (!IsNodeVisited(candidate))
-			{
-				m_VisitedNodes.push_back(candidate);
-				searchNodes.push(candidate);
-			}
-			else
-			{
-				delete candidate;
-			}
-		}
-	}
-	while (Node* node = searchNodes.front())
-	{
-		delete node;
-		searchNodes.pop();
+		node.GetNextStates(candidateCheck, addCandidate);
 	}
 	return std::vector<Direction>();
 }
 
 bool BreadthFirstSearch::IsNodeVisited(Node* node)
 {
-	for (Node* n : m_VisitedNodes)
-	{
-		if (*n == *node)
-			return true;
-	}
-	return false;
+	return m_VisitedNodes.find(node->state) != m_VisitedNodes.end();
 }

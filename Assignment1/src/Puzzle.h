@@ -18,7 +18,7 @@ public:
 	void SetGoalState(const String& state);
 
 	int FindBlankTile() const;
-	std::vector<Direction> Solve(SearchMethod& method);
+	std::vector<Direction> Solve(SearchMethod& method, bool wow);
 
 	inline byte* GetState() const { return m_State; }
 	inline byte* GetGoalState() const { return m_GoalState; }

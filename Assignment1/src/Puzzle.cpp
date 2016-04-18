@@ -17,7 +17,7 @@ void Puzzle::SetCurrentState(const String& state)
 {
 	StringList tokens = Tokenize(state);
 	ASSERT(tokens.size() == m_Width * m_Height);
-	for (int i = 0; i < tokens.size(); i++)
+	for (uint i = 0; i < tokens.size(); i++)
 		m_State[i] = NextInt(tokens[i]);
 }
 
@@ -25,7 +25,7 @@ void Puzzle::SetGoalState(const String& state)
 {
 	StringList tokens = Tokenize(state);
 	ASSERT(tokens.size() == m_Width * m_Height);
-	for (int i = 0; i < tokens.size(); i++)
+	for (uint i = 0; i < tokens.size(); i++)
 		m_GoalState[i] = NextInt(tokens[i]);
 }
 
@@ -39,9 +39,12 @@ int Puzzle::FindBlankTile() const
 	return -1;
 }
 
-std::vector<Direction> Puzzle::Solve(SearchMethod& method)
+std::vector<Direction> Puzzle::Solve(SearchMethod& method, bool forrealze)
 {
-	std::cout << "Attempting to solve puzzle using " << method.GetName() << std::endl;
-	std::cout << "Solving..." << std::endl;
+	if (forrealze)
+	{
+		std::cout << "Attempting to solve puzzle using " << method.GetName() << std::endl;
+		std::cout << "Solving..." << std::endl;
+	}
 	return method.Solve(*this);
 }

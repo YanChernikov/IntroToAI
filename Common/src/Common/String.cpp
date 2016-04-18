@@ -4,6 +4,8 @@
 #include <cstdlib>
 #include <algorithm>
 
+typedef unsigned int uint;
+
 String ReadStringFromFile(const String& path)
 {
 	FILE* file = fopen(path.c_str(), "rb");
@@ -141,7 +143,7 @@ bool StartsWith(const String& string, const String& start)
 int NextInt(const String& string)
 {
 	const char* str = string.c_str();
-	for (int i = 0; i < string.size(); i++)
+	for (uint i = 0; i < string.size(); i++)
 	{
 		if (isdigit(string[i]))
 		{
