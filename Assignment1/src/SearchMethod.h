@@ -4,12 +4,14 @@
 #include "Node.h"
 #include "Direction.h"
 
+#include <unordered_set>
+
 class Puzzle;
 
 class SearchMethod
 {
 protected:
-	std::vector<Node*> m_VisitedNodes;
+	std::unordered_set<State> m_VisitedNodes;
 	int m_Iterations;
 public:
 	SearchMethod()
@@ -19,8 +21,6 @@ public:
 
 	virtual ~SearchMethod()
 	{
-		for (Node* node : m_VisitedNodes)
-			delete node;
 	}
 
 	virtual std::vector<Direction> Solve(const Puzzle& puzzle) = 0;
@@ -28,6 +28,22 @@ public:
 	inline bool IsSolved(byte* state, byte* goal, byte size)
 	{
 		return memcmp(state, goal, size * sizeof(byte)) == 0;
+	}
+
+	bool IsStateVisited(State& state)
+	{
+		return m_VisitedNodes.find(state) != m_VisitedNodes.end();
+	}
+
+
+	bool SetContains(const std::vector<Node*>& set, const State& state) const
+	{
+		for (Node* n : set)
+		{
+			if (n->state == state)
+				return true;
+		}
+		return false;
 	}
 
 	virtual String GetName() = 0;

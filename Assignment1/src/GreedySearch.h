@@ -18,6 +18,5 @@ public:
 	inline String GetName() override { return GetStaticName(); }
 private:
 	Node* FindBestNode(const std::vector<Node*>& set, int* index = nullptr);
-	bool SetContains(const std::vector<Node*>& set, Node* node);
 	short CalculateHeuristic(byte* state, byte* goalState, byte width, byte height);
 };

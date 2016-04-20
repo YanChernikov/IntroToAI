@@ -25,35 +25,46 @@ std::vector<Direction> AStarSearch::Solve(const Puzzle& puzzle)
 	byte width = puzzle.GetWidth();
 	byte height = puzzle.GetHeight();
 
-	Node* root = new Node(puzzle.GetState(), width, height, nullptr);
-	root->SetCost(0, CalculateHeuristic(root->state, goalState, width, height));
+	Node* root = new Node((State*)puzzle.GetState(), width, height, nullptr);
+	root->SetCost(0, CalculateHeuristic(root->state.values, goalState, width, height));
 	root->position = Vector2i(blankTileIndex % width, blankTileIndex / width);
 
+	std::vector<Node*> candidates;
 	std::vector<Node*> closedSet, openSet;
+	std::function<bool(State&)> candidateCheck = [&](State& s)
+	{
+		return SetContains(closedSet, s);
+	};
+
+	std::function<void(Node*)> addCandidate = [&](Node* n)
+	{
+		m_VisitedNodes.insert(n->state);
+		candidates.push_back(n);
+	};
+
 	openSet.push_back(root);
 	while (openSet.size() > 0)
 	{
 		m_Iterations++;
 		int index = 0;
 		Node* current = FindBestNode(openSet, &index);
-		if (IsSolved(current->state, goalState, width * height))
+		if (IsSolved(current->state.values, goalState, width * height))
 			return TracePath(*current);
 
 		openSet.erase(openSet.begin() + index);
 		closedSet.push_back(current);
-		std::vector<Node*> candidates = current->GetNextStates();
+		current->GetNextStates(candidateCheck, addCandidate);
 		for (Node* candidate : candidates)
 		{
-			if (SetContains(closedSet, candidate))
-				continue;
 			int gCost = current->gCost + 1;
-			if (!SetContains(openSet, candidate))
+			if (!SetContains(openSet, candidate->state))
 				openSet.push_back(candidate);
 			else if (gCost >= candidate->gCost)
 				continue;
 
-			candidate->SetCost(gCost, CalculateHeuristic(candidate->state, goalState, width, height));
+			candidate->SetCost(gCost, CalculateHeuristic(candidate->state.values, goalState, width, height));
 		}
+		candidates.clear();
 	}
 	return std::vector<Direction>();
 }
@@ -74,16 +85,6 @@ Node* AStarSearch::FindBestNode(const std::vector<Node*>& set, int* index)
 		}
 	}
 	return result;
-}
-
-bool AStarSearch::SetContains(const std::vector<Node*>& set, Node* node)
-{
-	for (Node* n : set)
-	{
-		if (*n == *node)
-			return true;
-	}
-	return false;
 }
 
 short AStarSearch::CalculateHeuristic(byte* state, byte* goalState, byte width, byte height)
