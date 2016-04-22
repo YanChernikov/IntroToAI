@@ -6,6 +6,8 @@
 #include "DepthFirstSearch.h"
 #include "AStarSearch.h"
 #include "GreedySearch.h"
+#include "IDDepthFirstSearch.h"
+#include "IDAStarSearch.h"
 
 // TODO: Replace assertions with errors
 
@@ -14,7 +16,7 @@ int main(int argc, char* argv[])
 	if (argc < 3 || argc > 4)
 	{
 		std::cout << "Incorrect input arguments!" << std::endl;
-		std::cout << "\tUsage: search filename method(BFS|DFS|AS) [output_filename]" << std::endl;
+		std::cout << "\tUsage: search filename method(BFS|DFS|AS|IDDFS) [output_filename]" << std::endl;
 		return 1;
 	}
 	
@@ -40,6 +42,10 @@ int main(int argc, char* argv[])
 		smptr = new AStarSearch();
 	else if (method == GreedySearch::GetCode())
 		smptr = new GreedySearch();
+	else if (method == IDDepthFirstSearch::GetCode())
+		smptr = new IDDepthFirstSearch();
+	else if (method == IDAStarSearch::GetCode())
+		smptr = new IDAStarSearch();
 
 	ASSERT(smptr);
 
@@ -68,6 +74,10 @@ int main(int argc, char* argv[])
 		std::cout << std::endl;
 		std::cout << "Steps: " << result.size() << std::endl;
 		std::cout << "Iterations: " << search.GetIterationCount() << std::endl;
+
+		for (Direction direction : result)
+			std::cout << DirectionToString(direction) << ";";
+		std::cout << std::endl;
 	}
 
 	if (argc > 3)
@@ -79,7 +89,7 @@ int main(int argc, char* argv[])
 		WriteStringToFile(output, fileout);
 	}
 
-	system("PAUSE");
+	//system("PAUSE");
 	delete smptr;
 	return 0;
 }

@@ -139,6 +139,8 @@
     <ClCompile Include="src\BreadthFirstSearch.cpp" />
     <ClCompile Include="src\DepthFirstSearch.cpp" />
     <ClCompile Include="src\GreedySearch.cpp" />
+    <ClCompile Include="src\IDAStarSearch.cpp" />
+    <ClCompile Include="src\IDDepthFirstSearch.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\Node.cpp" />
     <ClCompile Include="src\Puzzle.cpp" />
@@ -157,6 +159,8 @@
     <ClInclude Include="src\DepthFirstSearch.h" />
     <ClInclude Include="src\Direction.h" />
     <ClInclude Include="src\GreedySearch.h" />
+    <ClInclude Include="src\IDAStarSearch.h" />
+    <ClInclude Include="src\IDDepthFirstSearch.h" />
     <ClInclude Include="src\Node.h" />
     <ClInclude Include="src\Puzzle.h" />
     <ClInclude Include="src\SearchMethod.h" />
