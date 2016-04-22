@@ -42,7 +42,6 @@ struct Node
 	const Node* parent;
 	Vector2i position;
 	Direction direction;
-	mutable byte RefCount;
 
 	short fCost, gCost, hCost;
 
@@ -63,7 +62,7 @@ struct Node
 		return !(*this == other);
 	}
 
-	static void* s_freelist;
+/*	static void* s_freelist;
 	inline void* operator new(size_t s)
 	{
 		if (!s_freelist)
@@ -86,6 +85,6 @@ struct Node
 	{
 		*(void**)p = s_freelist;
 		s_freelist = p;
-	}
+	}*/
 
 };

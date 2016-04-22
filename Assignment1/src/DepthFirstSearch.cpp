@@ -49,9 +49,6 @@ std::vector<Direction> DepthFirstSearch::Solve(const Puzzle& puzzle)
 			return TracePath(node);
 
 		node.GetNextStates(candidateCheck, addCandidate);
-
-		if (node.RefCount == 0)
-			delete &node;
 	}
 	return std::vector<Direction>();
 }

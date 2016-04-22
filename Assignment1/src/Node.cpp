@@ -1,25 +1,17 @@
 #include "Node.h"
 #include "SearchMethod.h"
 
-void* Node::s_freelist = nullptr;
+//void* Node::s_freelist = nullptr;
 
 Node::Node(State* state, byte width, byte height, const Node* parent)
 	: parent(parent), width(width), height(height), direction(Direction::NONE), position(0, 0),
 		fCost(0), gCost(0), hCost(0)
 {
-	RefCount = 0;
-	if (parent)
-		parent->RefCount++;
 	memcpy(this->state.values, state->values, width * height * sizeof(byte));
 }
 
 Node::~Node()
 {
-	if (parent)
-	{
-		if (--parent->RefCount == 0)
-			delete parent;
-	}
 }
 
 byte Node::GetNextDirections()
