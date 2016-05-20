@@ -13,8 +13,8 @@ public:
 	std::vector<Direction> Solve(const Puzzle& puzzle) override;
 
 	inline int GetIterationCount() const { return m_Iterations; }
-	inline static String GetStaticName() { return "Greedy Search"; }
-	inline static String GetCode() { return "GS"; }
+	inline static String GetStaticName() { return "Greedy Best-First Search"; }
+	inline static String GetCode() { return "GBFS"; }
 	inline String GetName() override { return GetStaticName(); }
 private:
 	Node* FindBestNode(const std::vector<Node*>& set, int* index = nullptr);

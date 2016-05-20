@@ -11,21 +11,38 @@
 
 // TODO: Replace assertions with errors
 
+static void PrintUsage()
+{
+	std::cout << "\tUsage: search filename method(BFS|DFS|GBFS|AS|CUS1|CUS2)" << std::endl;
+}
+
 int main(int argc, char* argv[])
 {
 	if (argc < 3 || argc > 4)
 	{
 		std::cout << "Incorrect input arguments!" << std::endl;
-		std::cout << "\tUsage: search filename method(BFS|DFS|AS|IDDFS) [output_filename]" << std::endl;
+		PrintUsage();
 		return 1;
 	}
 	
 	String filepath = argv[1];
 	String method = argv[2];
 	StringList lines = ReadLinesFromFile(filepath);
-	ASSERT(lines.size() >= 3);
+	if (lines.size() < 3)
+	{
+		std::cout << "Invalid input file format!" << std::endl;
+		PrintUsage();
+		return 2;
+	}
+
 	StringList puzzleSize = ::SplitString(lines[0], "x");
-	ASSERT(puzzleSize.size() == 2);
+	if (puzzleSize.size() != 2)
+	{
+		std::cout << "Invalid input file format!" << std::endl;
+		PrintUsage();
+		return 2;
+	}
+
 	int width = NextInt(puzzleSize[0]);
 	int height = NextInt(puzzleSize[1]);
 
@@ -33,6 +50,7 @@ int main(int argc, char* argv[])
 	puzzle.SetCurrentState(lines[1]);
 	puzzle.SetGoalState(lines[2]);
 
+	// Find the correct search algorithm to use based on the specified code
 	SearchMethod* smptr = nullptr;
 	if (method == BreadthFirstSearch::GetCode())
 		smptr = new BreadthFirstSearch();
@@ -47,17 +65,22 @@ int main(int argc, char* argv[])
 	else if (method == IDAStarSearch::GetCode())
 		smptr = new IDAStarSearch();
 
-	ASSERT(smptr);
+	if (smptr == nullptr)
+	{
+		std::cout << "Invalid search method!" << std::endl;
+		PrintUsage();
+		return 3;
+	}
 
 	SearchMethod& search = *smptr;
 	std::vector<Direction> result;
-	float time;
-	Timer timer;
-	for (int i = 0; i < 1; i++)
+	float time = 0.0f;
 	{
-		result = puzzle.Solve(search, i == 0);
+		// Time the result
+		Timer timer;
+		result = puzzle.Solve(search);
+		time = timer.ElapsedMillis();
 	}
-	time = timer.ElapsedMillis();
 
 	if (result.size() == 0)
 	{
@@ -80,16 +103,6 @@ int main(int argc, char* argv[])
 		std::cout << std::endl;
 	}
 
-	if (argc > 3)
-	{
-		String fileout = argv[3];
-		String output;
-		for (auto dir : result)
-			output += DirectionToString(dir) + "\n";
-		WriteStringToFile(output, fileout);
-	}
-
-	//system("PAUSE");
 	delete smptr;
 	return 0;
 }

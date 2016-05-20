@@ -1,3 +1,6 @@
+// A collection of commonly used functions which
+// I wrote to help with this assignment
+
 #pragma once
 
 #include <iostream>

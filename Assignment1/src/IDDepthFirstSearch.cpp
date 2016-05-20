@@ -26,59 +26,54 @@ std::vector<Direction> IDDepthFirstSearch::Solve(const Puzzle& puzzle)
 
 	byte width = puzzle.GetWidth();
 	byte height = puzzle.GetHeight();
-	Node root((State*)puzzle.GetState(), width, height, nullptr);
+	Node* root = Node::Create((State*)puzzle.GetState(), width, height, nullptr);
 	int blankTileIndex = puzzle.FindBlankTile();
-	root.position = Vector2i(blankTileIndex % width, blankTileIndex / width);
-	byte* goalState = puzzle.GetGoalState();
+	root->position = Vector2i(blankTileIndex % width, blankTileIndex / width);
+	byte* goalState = puzzle.GetGoalState()->GetValues();
+
+	struct Stack
+	{
+		Node* node;
+		int depth;
+	};
+
+	// Store every node we allocate as a unique pointer so that we can delete all of them when we exit this function
+	std::vector<std::unique_ptr<Node>> nodeList;
+	std::vector<Node*> candidates;
+
+	std::function<void(Node*)> addCandidate = [&](Node* n)
+	{
+		m_VisitedNodes.insert(n->GetState());
+		candidates.push_back(n);
+		nodeList.push_back(std::unique_ptr<Node>(n));
+	};
+
 	for (int searchDepth = 0; ; searchDepth++)
 	{
-		std::vector<Node*> nodeList;
+		int currentDepth = searchDepth;
 		m_VisitedNodes.clear();
-		std::stack<Node*> searchNodes;
-		std::stack<int> depthStack;
-		searchNodes.push(&root);
-		int depth = searchDepth;
-		depthStack.push(depth);
+		nodeList.clear();
+		std::stack<Stack> stack;
+		stack.push({ root, currentDepth });
 		std::function<bool(State&)> candidateCheck = std::bind(&SearchMethod::IsStateVisited, this, std::placeholders::_1);
-		std::function<void(Node*)> addCandidate = [&](Node* n)
-		{
-			m_VisitedNodes.insert(n->state);
-			searchNodes.push(n);
-			nodeList.push_back(n);
-		};
 
-		while (searchNodes.size() > 0)
+		while (stack.size() > 0)
 		{
 			m_Iterations++;
-			Node& node = *searchNodes.top();
-			searchNodes.pop();
+			Stack s = stack.top();
+			stack.pop();
 
-			int d = depthStack.top();
-			depthStack.pop();
+			if (s.depth == 0 && IsSolved(s.node->GetState().GetValues(), goalState, width * height))
+				return TracePath(*s.node);
 
-			if (d == 0 && IsSolved(node.state.values, goalState, width * height))
-			{
-				std::vector<Direction> result = TracePath(node);
-				for (Node* n : nodeList)
-					delete n;
-				return result;
-			}
-
-			if (d <= 0)
+			if (s.depth <= 0)
 				continue;
 
-			int ps = searchNodes.size();
-			node.GetNextStates(candidateCheck, addCandidate);
-			for (int i = 0; i < searchNodes.size() - ps; i++)
-				depthStack.push(d - 1);
+			candidates.clear();
+			s.node->GetNextStates(candidateCheck, addCandidate);
+			for (Node* candidate : candidates)
+				stack.push({ candidate, s.depth - 1 });
 		}
-		for (Node* n : nodeList)
-			delete n;
 	}
 	return std::vector<Direction>();
-}
-
-bool IDDepthFirstSearch::IsNodeVisited(Node* node)
-{
-	return m_VisitedNodes.find(node->state) != m_VisitedNodes.end();
 }

@@ -2,6 +2,7 @@
 
 #include "SearchMethod.h"
 
+// Depth-First Search implementation
 class DepthFirstSearch : public SearchMethod
 {
 private:
@@ -16,6 +17,4 @@ public:
 	inline static String GetStaticName() { return "Depth-First Search"; }
 	inline static String GetCode() { return "DFS"; }
 	inline String GetName() override { return GetStaticName(); }
-private:
-	bool IsNodeVisited(Node* node);
 };

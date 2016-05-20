@@ -2,6 +2,7 @@
 
 #include "SearchMethod.h"
 
+// Breadth-First Search implementation
 class BreadthFirstSearch : public SearchMethod
 {
 private:
@@ -16,6 +17,4 @@ public:
 	inline static String GetStaticName() { return "Breadth-First Search"; }
 	inline static String GetCode() { return "BFS"; }
 	inline String GetName() override { return GetStaticName(); }
-private:
-	bool IsNodeVisited(Node* node);
 };

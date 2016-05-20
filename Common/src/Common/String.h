@@ -3,6 +3,9 @@
 #include <string>
 #include <vector>
 
+// A series of string manipulation functions that proved useful for parsing
+// the input text file
+
 typedef std::string String;
 typedef std::vector<String> StringList;
 

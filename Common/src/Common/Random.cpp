@@ -6,7 +6,7 @@ Random::Generator Random::s_Generator;
 
 void Random::Init()
 {
-	s_Generator.seed(time(NULL));
+	s_Generator.seed((unsigned int)time(NULL));
 }
 
 int Random::Int()

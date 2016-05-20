@@ -25,70 +25,68 @@ std::vector<Direction> IDAStarSearch::Solve(const Puzzle& puzzle)
 	m_Iterations = 0;
 
 	int blankTileIndex = puzzle.FindBlankTile();
-	byte* goalState = puzzle.GetGoalState();
+	byte* goalState = puzzle.GetGoalState()->GetValues();
 	byte width = puzzle.GetWidth();
 	byte height = puzzle.GetHeight();
 
-	Node root((State*)puzzle.GetState(), width, height, nullptr);
-	root.SetCost(0, CalculateHeuristic(root.state.values, goalState, width, height));
-	root.position = Vector2i(blankTileIndex % width, blankTileIndex / width);
+	Node* root = Node::Create((State*)puzzle.GetState(), width, height, nullptr);
+	root->SetCost(0, CalculateHeuristic(root->GetState().GetValues(), goalState, width, height));
+	root->position = Vector2i(blankTileIndex % width, blankTileIndex / width);
 
-	std::vector<Node*> nodeList;
+	struct Stack
+	{
+		Node* node;
+		short bound;
+	};
 
-	float bound = root.hCost;
+	// Store every node we allocate as a unique pointer so that we can delete all of them when we exit this function
+	std::vector<std::unique_ptr<Node>> nodeList;
+	std::vector<Node*> candidates;
+
+	std::function<void(Node*)> addCandidate = [&](Node* n)
+	{
+		m_VisitedNodes.insert(n->GetState());
+		candidates.push_back(n);
+		nodeList.push_back(std::unique_ptr<Node>(n));
+	};
+
+	short searchBound = root->hCost;
 	while (true)
 	{
 		m_VisitedNodes.clear();
-		std::stack<Node*> nodeStack;
-		std::stack<float> boundStack;
-		nodeStack.push(&root);
-		boundStack.push(bound);
+		std::stack<Stack> stack;
+		stack.push({ root, searchBound });
 
-		float b = 0.0f;
-		while (nodeStack.size() > 0)
+		short bound = 0;
+		while (stack.size() > 0)
 		{
 			m_Iterations++;
-			Node* current = nodeStack.top();
-			nodeStack.pop();
-			b = boundStack.top();
-			boundStack.pop();
-			float f = current->gCost + CalculateHeuristic(current->state.values, goalState, width, height);
-			if (f > b)
+			Stack s = stack.top();
+			stack.pop();
+			bound = s.bound;
+			Node* current = s.node;
+			short fCost = current->gCost + CalculateHeuristic(current->GetState().GetValues(), goalState, width, height);
+			if (fCost > bound)
 			{
-				b = f;
+				bound = fCost;
 				continue;
 			}
 
-			if (IsSolved(current->state.values, goalState, width * height))
-			{
-				std::vector<Direction> result = TracePath(*current);
-				for (Node* n : nodeList)
-					delete n;
-				return result;
-			}
+			if (IsSolved(current->GetState().GetValues(), goalState, width * height))
+				return TracePath(*current);
 
-			std::vector<Node*> candidates;
+			candidates.clear();
 			std::function<bool(State&)> candidateCheck = std::bind(&SearchMethod::IsStateVisited, this, std::placeholders::_1);
-			std::function<void(Node*)> addCandidate = [&](Node* n)
-			{
-				m_VisitedNodes.insert(n->state);
-				candidates.push_back(n);
-			};
-
 			current->GetNextStates(candidateCheck, addCandidate);
 			for (Node* candidate : candidates)
 			{
 				int gCost = current->gCost + 1;
-				candidate->SetCost(gCost, b);
-				nodeStack.push(candidate);
-				nodeList.push_back(candidate);
-				boundStack.push(b);
+				candidate->SetCost(gCost, bound);
+				stack.push({ candidate, bound });
 			}
 		}
-		bound = b;
+		searchBound = bound;
 	}
-	for (Node* n : nodeList)
-		delete n;
 	return std::vector<Direction>();
 }
 

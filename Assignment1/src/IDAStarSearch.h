@@ -14,7 +14,7 @@ public:
 
 	inline int GetIterationCount() const { return m_Iterations; }
 	inline static String GetStaticName() { return "Iterative Deepening A* Search"; }
-	inline static String GetCode() { return "IDAS"; }
+	inline static String GetCode() { return "CUS2"; }
 	inline String GetName() override { return GetStaticName(); }
 private:
 	short CalculateHeuristic(byte* state, byte* goalState, byte width, byte height);

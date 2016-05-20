@@ -7,11 +7,35 @@
 #include <unordered_set>
 
 class Puzzle;
+struct StatePtr
+{
+	const State* state;
+	StatePtr(const State& s) : state(&s)
+	{
+
+	}
+	bool operator==(const StatePtr& other) const
+	{
+		return *state == *other.state;
+	}
+};
+
+namespace std
+{
+	template <> struct hash<StatePtr>
+	{
+		size_t operator()(const StatePtr& s) const
+		{
+			hash<State> h;
+			return h(*s.state);
+		}
+	};
+}
 
 class SearchMethod
 {
 protected:
-	std::unordered_set<State> m_VisitedNodes;
+	std::unordered_set<StatePtr> m_VisitedNodes;
 	int m_Iterations;
 public:
 	SearchMethod()
@@ -40,7 +64,7 @@ public:
 	{
 		for (Node* n : set)
 		{
-			if (n->state == state)
+			if (n->GetState() == state)
 				return true;
 		}
 		return false;

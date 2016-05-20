@@ -12,7 +12,6 @@ String ReadStringFromFile(const String& path)
 	if (!file)
 	{
 		std::cout << "Error: could not open file '" << path << "'" << std::endl;
-		__debugbreak();
 		return String();
 	}
 	fseek(file, 0, SEEK_END);

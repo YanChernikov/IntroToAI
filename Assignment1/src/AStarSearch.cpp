@@ -5,6 +5,7 @@ AStarSearch::AStarSearch()
 {
 }
 
+// Traces the path from the goal node to the start, adding each direction into the resulting vector
 std::vector<Direction> AStarSearch::TracePath(const Node& leaf)
 {
 	std::vector<Direction> results;
@@ -20,26 +21,31 @@ std::vector<Direction> AStarSearch::TracePath(const Node& leaf)
 
 std::vector<Direction> AStarSearch::Solve(const Puzzle& puzzle)
 {
+	// Retrieve our puzzle parameters
 	int blankTileIndex = puzzle.FindBlankTile();
-	byte* goalState = puzzle.GetGoalState();
+	byte* goalState = puzzle.GetGoalState()->GetValues();
 	byte width = puzzle.GetWidth();
 	byte height = puzzle.GetHeight();
 
-	Node* root = new Node((State*)puzzle.GetState(), width, height, nullptr);
-	root->SetCost(0, CalculateHeuristic(root->state.values, goalState, width, height));
+	Node* root = Node::Create((State*)puzzle.GetState(), width, height, nullptr);
+	root->SetCost(0, CalculateHeuristic(root->GetState().GetValues(), goalState, width, height));
 	root->position = Vector2i(blankTileIndex % width, blankTileIndex / width);
 
+	// Store every node we allocate as a unique pointer so that we can delete all of them when we exit this function
+	std::vector<std::unique_ptr<Node>> nodeList;
 	std::vector<Node*> candidates;
 	std::vector<Node*> closedSet, openSet;
 	std::function<bool(State&)> candidateCheck = [&](State& s)
 	{
+		// Check to make sure the node we are considering isn't in the closedSet
 		return SetContains(closedSet, s);
 	};
 
 	std::function<void(Node*)> addCandidate = [&](Node* n)
 	{
-		m_VisitedNodes.insert(n->state);
+		m_VisitedNodes.insert(n->GetState());
 		candidates.push_back(n);
+		nodeList.push_back(std::unique_ptr<Node>(n));
 	};
 
 	openSet.push_back(root);
@@ -47,8 +53,9 @@ std::vector<Direction> AStarSearch::Solve(const Puzzle& puzzle)
 	{
 		m_Iterations++;
 		int index = 0;
+		// Find best node (by cost) to expand
 		Node* current = FindBestNode(openSet, &index);
-		if (IsSolved(current->state.values, goalState, width * height))
+		if (IsSolved(current->GetState().GetValues(), goalState, width * height))
 			return TracePath(*current);
 
 		openSet.erase(openSet.begin() + index);
@@ -56,24 +63,30 @@ std::vector<Direction> AStarSearch::Solve(const Puzzle& puzzle)
 		current->GetNextStates(candidateCheck, addCandidate);
 		for (Node* candidate : candidates)
 		{
+			// Add a movement cost of 1 to advance to the next node
 			int gCost = current->gCost + 1;
-			if (!SetContains(openSet, candidate->state))
+			// Add the node to the openSet if it doesn't already contain it
+			if (!SetContains(openSet, candidate->GetState()))
 				openSet.push_back(candidate);
 			else if (gCost >= candidate->gCost)
 				continue;
 
-			candidate->SetCost(gCost, CalculateHeuristic(candidate->state.values, goalState, width, height));
+			// Set the cost of our candidate
+			candidate->SetCost(gCost, CalculateHeuristic(candidate->GetState().GetValues(), goalState, width, height));
 		}
 		candidates.clear();
 	}
 	return std::vector<Direction>();
 }
 
+// This function finds the node with the lowest fCost in the given vector,
+// and optionally provides its index in that vector
 Node* AStarSearch::FindBestNode(const std::vector<Node*>& set, int* index)
 {
 	Node* result = nullptr;
+	// Initialize min with some large value
 	int min = 100000;
-	for (int i = 0; i < set.size(); i++)
+	for (uint i = 0; i < set.size(); i++)
 	{
 		Node* node = set[i];
 		if (node->fCost < min)
@@ -87,6 +100,9 @@ Node* AStarSearch::FindBestNode(const std::vector<Node*>& set, int* index)
 	return result;
 }
 
+// Calculates the A* heuristic. I've chosen to use the sum of the Manhattan distances of each
+// tile's position to its destination position in the puzzle, because this seemed to work really
+// well in my testing
 short AStarSearch::CalculateHeuristic(byte* state, byte* goalState, byte width, byte height)
 {
 	int score = 0;
